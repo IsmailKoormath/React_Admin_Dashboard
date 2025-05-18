@@ -15,8 +15,6 @@ import { useEffect, useState } from "react";
 import { useAppSelector } from "../hooks/reduxHooks";
 import { UserGroupIcon, BoltIcon, ClockIcon } from "@heroicons/react/24/solid";
 
-
-
 const stats = {
   usersCount: 120,
   activeSessions: 45,
@@ -40,7 +38,7 @@ const userRolesData = [
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
-  const darkMode = useAppSelector((state) => state.theme.darkMode); // Only for chart strokes
+  const darkMode = useAppSelector((state) => state.theme.darkMode); 
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);

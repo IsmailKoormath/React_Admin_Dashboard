@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import { toggleDarkMode } from "../store/slices/themeSlice";
 
-// Add to Header props
 const Header = ({ onSidebarToggle }: { onSidebarToggle: () => void }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
