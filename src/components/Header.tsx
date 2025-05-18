@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../hooks/reduxHooks";
 import { logout } from "../store/slices/authSlice";
 import { Switch } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 import { toggleDarkMode } from "../store/slices/themeSlice";
 
-const Header = () => {
+// Add to Header props
+const Header = ({ onSidebarToggle }: { onSidebarToggle: () => void }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [enabled, setEnabled] = useState(() => {
@@ -21,6 +22,8 @@ const Header = () => {
     }
   }, [enabled]);
 
+
+
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
@@ -32,10 +35,35 @@ const Header = () => {
     dispatch(toggleDarkMode());
     localStorage.setItem("theme", newValue ? "dark" : "light");
   };
+    const darkMode = useAppSelector((state) => state.theme.darkMode);
+
 
   return (
-    <header className={`bg-white dark:bg-gray-900 shadow p-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700`}>
-      <div className="flex items-center gap-4">
+    <header
+      className={` ${
+        darkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-200"
+      } shadow p-4 flex items-center justify-between border-b `}
+    >
+      <button
+        onClick={onSidebarToggle}
+        className="md:hidden text-gray-700 dark:text-white"
+      >
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+
+      <div className="flex items-center gap-4 sm:gap-20 ml-auto">
         <div className="flex items-center gap-2">
           <SunIcon className="w-5 h-5 text-yellow-500" />
           <Switch

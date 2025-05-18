@@ -55,7 +55,7 @@ const Settings = () => {
 
         <button
           type="submit"
-          className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-lg font-semibold transition duration-300"
+          className="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-3 rounded-lg font-semibold transition duration-300"
         >
           💾 Save Settings
         </button>

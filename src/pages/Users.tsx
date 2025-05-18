@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Header from "../components/Header";
-import { useAppSelector } from "../hooks/reduxHooks";
 
 interface User {
   id: number;
   name: string;
   email: string;
   company: { name: string };
+  isLocal?: boolean;
 }
 
 const Users = () => {
@@ -16,8 +15,7 @@ const Users = () => {
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
   const [search, setSearch] = useState("");
-
-  const darkMode = useAppSelector((state) => state.theme.darkMode);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">();
 
   useEffect(() => {
     axios
@@ -31,6 +29,7 @@ const Users = () => {
       name,
       email,
       company: { name: company },
+      isLocal: true,
     };
     setUsers((prev) => [newUser, ...prev]);
     setName("");
@@ -38,33 +37,44 @@ const Users = () => {
     setCompany("");
   };
 
-  const filtered = users.filter((u) =>
-    u.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const toggleSortOrder = () => {
+    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+  };
+
+  const filtered = users
+    .filter((u) => u.name.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      const nameCompare =
+        sortOrder === "asc"
+          ? a.name.localeCompare(b.name)
+          : b.name.localeCompare(a.name);
+      return nameCompare;
+    });
 
   return (
-    <>
-      <h1
-        className={`text-3xl font-bold mb-6 ${
-          darkMode ? "text-white " : "text-gray-800"
-        }  `}
-      >
+    <div className="p-6 max-w-6xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">
         👥 User Management
       </h1>
-
-      <input
-        type="text"
-        placeholder="🔍 Search by name..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="mb-6 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-      />
-
-      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"> */}
+      <div className="flex gap-3">
+        <input
+          type="text"
+          placeholder="🔍 Search by name..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="mb-6 w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+        />
+        <button
+          onClick={toggleSortOrder}
+          className="px-4 w-full max-w-[150px] h-[45px] bg-indigo-500 text-white rounded hover:bg-indigo-600 cursor-pointer"
+        >
+          Sort: {sortOrder === "asc" ? "A-Z" : "Z-A"}
+        </button>
+      </div>
       <form
         className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
         onSubmit={(e) => {
-          e.preventDefault(); // Prevent page reload
+          e.preventDefault();
           if (name.trim() && email.trim() && company.trim()) {
             handleAddUser();
           }
@@ -96,9 +106,9 @@ const Users = () => {
         />
         <button
           type="submit"
-          className="col-span-full bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-lg font-semibold transition duration-300"
+          className="col-span-full bg-indigo-500 hover:bg-indigo-600 text-white py-3 rounded-lg font-semibold transition duration-300"
         >
-          ➕ Add User
+          Add User
         </button>
       </form>
 
@@ -124,7 +134,7 @@ const Users = () => {
           <p className="text-gray-500 dark:text-gray-400">No users found.</p>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
